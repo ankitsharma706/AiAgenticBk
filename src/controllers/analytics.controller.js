@@ -25,8 +25,14 @@ const syncForecastsToPredictions = async () => {
                     .pipe(csv())
                     .on('data', (row) => {
                         try {
-                            // Map user_001 to C-001
-                            const cid = row.user_id ? row.user_id.replace('user_', 'C-') : null;
+                            // Normalize ID mapping: user_001 -> C-0001
+                            let cid = null;
+                            if (row.user_id) {
+                                const numMatch = row.user_id.match(/\d+/);
+                                if (numMatch) {
+                                    cid = `C-${numMatch[0].padStart(4, '0')}`;
+                                }
+                            }
                             if (!cid) return;
                             if (!activityMap[cid]) activityMap[cid] = [];
                             activityMap[cid].push({
@@ -59,8 +65,16 @@ const syncForecastsToPredictions = async () => {
                         .pipe(csv())
                         .on('data', (row) => {
                             try {
-                                const customerId = row['Customer ID'] || row.customer_id;
+                                let customerId = row['Customer ID'] || row.customer_id;
                                 if (!customerId || customerId.trim() === '' || customerId === 'null') return;
+                                
+                                // Normalize to C-XXXX
+                                const numMatch = customerId.match(/\d+/);
+                                if (numMatch) {
+                                    customerId = `C-${numMatch[0].padStart(4, '0')}`;
+                                } else {
+                                    return; // Invalid ID format
+                                }
 
                                 forecasts.push({
                                     customer_id: customerId,
