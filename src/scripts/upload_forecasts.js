@@ -4,7 +4,7 @@ const path = require('path');
 const csv = require('csv-parser');
 require('dotenv').config({ path: path.join(__dirname, '../../../.env') });
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://conduitray:jDpdINYNgbKBS4Hq@cluster0.pxsiiwr.mongodb.net/agentic';
+const MONGO_URI = process.env.MONGO_URI || '';
 const CSV_PATH = path.join(__dirname, '../../../ml-service/data/quarterly_forecast_raw_predictions.csv');
 
 async function upload() {
